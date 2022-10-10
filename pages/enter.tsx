@@ -60,7 +60,7 @@ const Enter: NextPage = () => {
               type="number"
               required
             />
-            <Button text={submitting ? "Loading" : "Confirm Token"} />
+            <Button text={submitting ? "Loading" : "Confirm Token!"} />
           </form>
         ) : (
           <>
