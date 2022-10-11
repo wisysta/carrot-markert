@@ -1,13 +1,32 @@
 import client from "@libs/server/client";
 import withHandler, { ResponseType } from "@libs/server/widthHandler";
 import { NextApiRequest, NextApiResponse } from "next";
+import { withApiSession } from "@libs/server/withSession";
 
-async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseType>
-) {
-  const { token } = req.body;
-  res.status(200).end();
+declare module "iron-session" {
+    interface IronSessionData {
+        user?: {
+            id: number;
+        };
+    }
 }
 
-export default withHandler("POST", handler);
+async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse<ResponseType>
+) {
+    const { token } = req.body;
+    const foundToken = await client.token.findUnique({
+        where: { payload: token },
+    });
+
+    if (!foundToken) return res.status(404).end();
+    req.session.user = {
+        id: foundToken?.user_id,
+    };
+    await req.session.save();
+    await client.token.deleteMany({ where: { user_id: foundToken.user_id } });
+    res.json({ ok: true });
+}
+
+export default withApiSession(withHandler({ method: "POST", handler }));
