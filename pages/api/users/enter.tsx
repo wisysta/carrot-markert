@@ -1,5 +1,5 @@
 import client from "@libs/server/client";
-import withHandler, { ResponseType } from "@libs/server/widthHandler";
+import withHandler, { ResponseType } from "@libs/server/withHandler";
 import { NextApiRequest, NextApiResponse } from "next";
 import twilio from "twilio";
 import mail from "@sendgrid/mail";

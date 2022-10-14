@@ -7,9 +7,15 @@ import Head from "next/head";
 import useSWR from "swr";
 import { Product } from "@prisma/client";
 
+interface ProductWithCount extends Product {
+    _count: {
+        fav_set: number;
+    };
+}
+
 interface ProductsResponse {
     ok: boolean;
-    products: Product[];
+    products: ProductWithCount[];
 }
 
 const Home: NextPage = () => {
@@ -21,16 +27,19 @@ const Home: NextPage = () => {
                 <title>Home</title>
             </Head>
             <div className="flex flex-col space-y-5 divide-y">
-                {data?.products?.map(({ id, name, price }, i) => (
-                    <Item
-                        id={id}
-                        key={id}
-                        title={name}
-                        price={price}
-                        comments={1}
-                        hearts={1}
-                    />
-                ))}
+                {data?.products?.map(({ id, name, price, _count }, i) => {
+                    console.log(_count);
+                    return (
+                        <Item
+                            id={id}
+                            key={id}
+                            title={name}
+                            price={price}
+                            comments={1}
+                            hearts={_count.fav_set}
+                        />
+                    );
+                })}
                 <FloatingButton href="/items/upload">
                     <svg
                         className="h-6 w-6"

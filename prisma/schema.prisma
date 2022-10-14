@@ -10,16 +10,19 @@ datasource db {
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  phone       String?   @unique
-  email       String?   @unique
-  name        String
-  avatar      String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  token_set   Token[]
-  product_set Product[]
-  fav_set     Fav[]
+  id            Int         @id @default(autoincrement())
+  phone         String?     @unique
+  email         String?     @unique
+  name          String
+  avatar        String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  token_set     Token[]
+  product_set   Product[]
+  fav_set       Fav[]
+  post_set      Post[]
+  answer_set    Answer[]
+  wondering_set Wondering[]
 }
 
 model Token {
@@ -41,7 +44,7 @@ model Product {
   name        String
   price       Int
   description String   @db.MediumText
-  Fav         Fav[]
+  fav_set     Fav[]
 }
 
 model Fav {
@@ -52,4 +55,36 @@ model Fav {
   updatedAt  DateTime @updatedAt
   user_id    Int
   product_id Int
+}
+
+model Post {
+  id            Int         @id @default(autoincrement())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  user          User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id       Int
+  question      String      @db.MediumText
+  answer_set    Answer[]
+  wondering_set Wondering[]
+}
+
+model Answer {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  answer    String   @db.MediumText
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id   Int
+  post      Post     @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id   Int
+}
+
+model Wondering {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id   Int
+  post      Post     @relation(fields: [post_id], references: [id], onDelete: Cascade)
+  post_id   Int
 }
