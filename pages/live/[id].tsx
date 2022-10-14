@@ -1,8 +1,11 @@
 import type { NextPage } from "next";
 import Layout from "@components/layout";
 import Message from "@components/message";
+import { useRouter } from "next/router";
 
 const Stream: NextPage = () => {
+    const router = useRouter();
+    console.log(router);
     return (
         <Layout canGoBack>
             <div className="py-10 px-4  space-y-4">
