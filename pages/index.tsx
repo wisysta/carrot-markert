@@ -7,7 +7,7 @@ import Head from "next/head";
 import useSWR from "swr";
 import { Product } from "@prisma/client";
 
-interface ProductWithCount extends Product {
+export interface ProductWithCount extends Product {
     _count: {
         fav_set: number;
     };
@@ -28,7 +28,6 @@ const Home: NextPage = () => {
             </Head>
             <div className="flex flex-col space-y-5 divide-y">
                 {data?.products?.map(({ id, name, price, _count }, i) => {
-                    console.log(_count);
                     return (
                         <Item
                             id={id}

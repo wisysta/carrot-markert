@@ -6,18 +6,22 @@ import { useForm } from "react-hook-form";
 import useMutation from "@libs/client/useMutation";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import useCoords from "@libs/client/useCoord";
 
 interface WriteForm {
     question: string;
 }
 
 const Write: NextPage = () => {
+    const { latitude, longitude } = useCoords();
     const router = useRouter();
     const { register, handleSubmit } = useForm<WriteForm>();
     const [post, { loading, data }] = useMutation("/api/posts");
-    const onValid = (data: WriteForm) => {
+    const onValid = (form: WriteForm) => {
         if (loading) return;
-        post(data);
+        if (latitude && longitude) {
+            post({ ...form, latitude, longitude });
+        }
     };
     useEffect(() => {
         if (data && data.ok) {
@@ -35,7 +39,7 @@ const Write: NextPage = () => {
                     required
                     placeholder="Ask a question!"
                 />
-                <Button text={loading ? "Loading..." : "Submit"} />
+                <Button loading={loading} text="Submit" />
             </form>
         </Layout>
     );
