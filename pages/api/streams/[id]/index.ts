@@ -9,6 +9,7 @@ async function handler(
 ) {
     const {
         query: { id },
+        session: { user },
     } = req;
     const stream = await client.stream.findUnique({
         where: {
@@ -29,6 +30,11 @@ async function handler(
             },
         },
     });
+    const isOwner = stream?.user_id === user?.id;
+    if (stream && !isOwner) {
+        stream.cloudFlare_key = "xxxxx";
+        stream.cloudFlare_url = "xxxxx";
+    }
     res.json({ ok: true, stream });
 }
 

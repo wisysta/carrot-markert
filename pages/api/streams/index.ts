@@ -12,10 +12,30 @@ async function handler(
         body: { name, price, description },
     } = req;
     if (req.method === "POST") {
+        const {
+            result: {
+                uid,
+                rtmps: { streamKey, url },
+            },
+        } = await (
+            await fetch(
+                `https://api.cloudflare.com/client/v4/accounts/${process.env.FLARE_ACCOUNT_ID}/stream/live_inputs`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${process.env.FLARE_STREAM_TOKEN}`,
+                    },
+                    body: `{"meta": {"name":"${name}"},"recording": { "mode": "automatic", "timeoutSeconds": 10}}`,
+                }
+            )
+        ).json();
         const stream = await client.stream.create({
             data: {
+                cloudFlare_id: uid,
+                cloudFlare_key: streamKey,
+                cloudFlare_url: url,
                 name,
-                price: Number(price),
+                price,
                 description,
                 user: {
                     connect: {
@@ -26,7 +46,7 @@ async function handler(
         });
         res.json({ ok: true, stream });
     } else if (req.method === "GET") {
-        const streams = await client.stream.findMany();
+        const streams = await client.stream.findMany({});
         res.json({ ok: true, streams });
     }
 }
