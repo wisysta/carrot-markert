@@ -13,10 +13,13 @@ export default function useUser() {
     const router = useRouter();
 
     useEffect(() => {
+        if (error) {
+            router.replace("/enter");
+        }
         if (data && !data.ok) {
             router.replace("/enter");
         }
-    }, [data, router]);
+    }, [data, router, error]);
 
     return { user: data?.profile, isLoading: !data && !error };
 }

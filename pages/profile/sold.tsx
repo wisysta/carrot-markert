@@ -5,7 +5,7 @@ import useSWR from "swr";
 import ProductList from "@components/product-list";
 
 const Sold: NextPage = () => {
-    const { data } = useSWR(`/api/users/me/sales`);
+    const { data } = useSWR("/api/users/me/sales");
     return (
         <Layout title="판매내역" canGoBack>
             <div className="flex flex-col space-y-5 pb-10  divide-y">

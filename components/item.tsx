@@ -1,25 +1,26 @@
+import Image from "next/image";
 import Link from "next/link";
 
 interface ItemProps {
     title: string;
     id: number;
     price: number;
-    comments?: number;
+    image: string;
     hearts: number;
 }
 
-export default function Item({
-    title,
-    price,
-    comments,
-    hearts,
-    id,
-}: ItemProps) {
+export default function Item({ title, price, image, hearts, id }: ItemProps) {
     return (
         <Link href={`/products/${id}`}>
             <a className="flex px-4 pt-5 cursor-pointer justify-between">
                 <div className="flex space-x-4">
-                    <div className="w-20 h-20 bg-gray-400 rounded-md" />
+                    <div className="w-20 h-20 relative  rounded-md">
+                        <Image
+                            src={`https://imagedelivery.net/1eWj_AuWvuDvW69i0NTKxg/${image}/public`}
+                            layout="fill"
+                            objectFit="cover"
+                        />
+                    </div>{" "}
                     <div className="pt-2 flex flex-col">
                         <h3 className="text-sm font-medium text-gray-900">
                             {title}
@@ -47,7 +48,7 @@ export default function Item({
                         </svg>
                         <span>{hearts}</span>
                     </div>
-                    <div className="flex space-x-0.5 items-center text-sm  text-gray-600">
+                    {/* <div className="flex space-x-0.5 items-center text-sm  text-gray-600">
                         <svg
                             className="w-4 h-4"
                             fill="none"
@@ -63,7 +64,7 @@ export default function Item({
                             ></path>
                         </svg>
                         <span>{comments}</span>
-                    </div>
+                    </div> */}
                 </div>
             </a>
         </Link>
