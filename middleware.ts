@@ -20,14 +20,17 @@ export function middleware(req: NextRequest, ev: NextFetchEvent) {
         req.nextUrl.pathname = "/enter";
         return NextResponse.redirect(req.nextUrl);
     }
+    if (req.nextUrl.pathname.startsWith("/api")) {
+        return NextResponse.next();
+    }
 
     if (req.nextUrl.pathname.startsWith("/community")) {
         const ua = userAgent(req);
         console.log(ua);
         console.log("community!!");
     }
-    if (req.nextUrl.pathname.startsWith("/api/posts")) {
-        console.log("api/posts");
+    if (req.nextUrl.pathname.startsWith("/api")) {
+        return NextResponse.next();
     }
 
     if (
