@@ -9,12 +9,21 @@ import { Product } from "@prisma/client";
 import client from "@libs/server/client";
 
 import dynamic from "next/dynamic";
+import { Suspense, useEffect, useState } from "react";
 
 // const BS = dynamic(() => import("@components/item"), {
 //     ssr: false,
 //     loading: () => <span>Loading...</span>,
 //     suspense: true,
 // });
+
+import {
+    QueryClient,
+    QueryClientProvider,
+    useQuery,
+    dehydrate,
+    Hydrate,
+} from "react-query";
 
 export interface ProductWithCount extends Product {
     _count: {
@@ -27,9 +36,26 @@ interface ProductsResponse {
     products: ProductWithCount[];
 }
 
-const Home: NextPage = () => {
-    const { user, isLoading } = useUser();
-    const { data } = useSWR<ProductsResponse>("/api/products");
+const queryClient = new QueryClient();
+const url: string = "/api/products";
+
+const fetcher = (url: string) => fetch(url).then((response) => response.json());
+
+const Home: NextPage<{
+    products: ProductWithCount[];
+}> = ({ products }) => {
+    // console.log(products);
+    const [api, setApi] = useState<string>("");
+
+    useEffect(() => {
+        setApi(url);
+    }, []);
+
+    const { isLoading, error, data } = useQuery<ProductsResponse>(
+        api,
+        () => fetch(api).then((res) => res.json()),
+        { initialData: { ok: true, products }, enabled: api !== "" }
+    );
     return (
         <Layout title="홈" hasTabBar>
             <div className="flex flex-col space-y-5 divide-y">
@@ -71,16 +97,24 @@ const Home: NextPage = () => {
     );
 };
 
-const Page: NextPage<{ products: ProductWithCount[] }> = ({ products }) => (
-    <SWRConfig
-        value={{
-            fallback: {
-                "/api/products": { ok: true, products },
-            },
-        }}
-    >
-        <Home />
-    </SWRConfig>
+// const Page: NextPage<{ products: ProductWithCount[] }> = ({ products }) => (
+//     <SWRConfig
+//         value={{
+//             fallback: {
+//                 "/api/products": { ok: true, products },
+//             },
+//         }}
+//     >
+//         <Home />
+//     </SWRConfig>
+// );
+
+const PageProvidedReactQuery: NextPage<{
+    products: ProductWithCount[];
+}> = ({ products }) => (
+    <QueryClientProvider client={queryClient}>
+        <Home products={products} />
+    </QueryClientProvider>
 );
 
 export async function getServerSideProps() {
@@ -93,6 +127,7 @@ export async function getServerSideProps() {
             },
         },
     });
+
     return {
         props: {
             products: JSON.parse(JSON.stringify(products)),
@@ -100,4 +135,4 @@ export async function getServerSideProps() {
     };
 }
 
-export default Page;
+export default PageProvidedReactQuery;

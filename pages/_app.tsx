@@ -32,6 +32,10 @@ function MyApp({ Component, pageProps }: AppProps) {
                 // }}
             />
         </SWRConfig>
+
+        // <div className="w-full max-w-xl mx-auto">
+        //     <Component {...pageProps} />
+        // </div>
     );
 }
 
