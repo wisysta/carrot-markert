@@ -26,7 +26,6 @@ async function handler(
                 id: user?.id,
             },
         });
-        console.log(currentUser);
         if (email && email !== currentUser?.email) {
             const alreadyExists = Boolean(
                 await client.user.findUnique({

@@ -26,8 +26,6 @@ export function middleware(req: NextRequest, ev: NextFetchEvent) {
 
     if (req.nextUrl.pathname.startsWith("/community")) {
         const ua = userAgent(req);
-        console.log(ua);
-        console.log("community!!");
     }
     if (req.nextUrl.pathname.startsWith("/api")) {
         return NextResponse.next();
